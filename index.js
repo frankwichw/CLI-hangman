@@ -6,26 +6,51 @@ var inquirer = require("inquirer");
 // creating array of possible words
 var wordArray = ["phenomenal", "excellent", "sensational", "exquisite"];
 
-// choosing word to be used from array at random
-var chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
+var chosenWord;
 
 // initializing guesses left variable
-var guessesLeft = 20
+var guessesLeft;
 
-// creating word object passing it the chosen word
-var wordObj = new Word(chosenWord);
+var wordObj;
 
-// console.log(wordObj.letterArray[0]);
+var questions = [
+  {
+    type: 'input',
+    name: 'game_start',
+    message: "Do you want to play hangman? y/n (type y or n and hit enter)"
+  }
+];
 
-// initializing chosen word array and letter objects
-wordObj.newLetters(chosenWord);
-wordObj.letterMaker();
-// displaying word
-console.log("\n" + wordObj.displayArray);
-console.log("\nGuesses left: " + guessesLeft + "\n");
+inquirer.prompt(questions).then(answers => {
+	if(answers.game_start === "y"){
+		initializeGame();
+	} else {
+		console.log("\nBye! :)\n");
+	}
+});
+
+var initializeGame = function(){
+	// choosing word to be used from array at random
+	chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
+	
+	guessesLeft = 20;
+
+	// creating word object passing it the chosen word
+	wordObj = new Word(chosenWord);
+
+	// initializing chosen word array and letter objects
+	wordObj.newLetters(chosenWord);
+	wordObj.letterMaker();
+
+	// displaying word
+	console.log("\n" + wordObj.displayArray);
+	console.log("\nGuesses left: " + guessesLeft + "\n");
+
+	gameFunction();
+}
 
 // creating inquirer questions
-var questions = [
+var gameQuestions = [
   {
     type: 'input',
     name: 'input_guess',
@@ -36,7 +61,7 @@ var questions = [
 // using recursion to ask for guesses 
 var gameFunction = function() {
 	// inquirer prompting user for guess
-	inquirer.prompt(questions).then(answers => {
+	inquirer.prompt(gameQuestions).then(answers => {
 	  // console.log(JSON.stringify(answers.input_guess));
 	  // decrement guesses left
 	  guessesLeft--;
@@ -45,22 +70,18 @@ var gameFunction = function() {
 	  wordObj.guessFunction(answers.input_guess);
 
 	  // display the word and the guesses left to player
-	  console.log("\n" + wordObj.letterArray[0]);
 	  console.log("\n" + wordObj.displayArray);
 	  console.log("\nGuesses left: " + guessesLeft + "\n");
 
-	  if (guessesLeft > 0 && wordObj.displayArray != wordObj.letterArray[0]){
+	  if (guessesLeft > 0 && wordObj.displayArray.toString() != wordObj.letterArray[0].toString()){
 	  	gameFunction();
-	  } else if (guessesLeft > 0 && wordObj.displayArray === wordObj.letterArray[0]){
+	  } else if (guessesLeft > 0 && wordObj.displayArray.toString() === wordObj.letterArray[0].toString()){
 	  	winning();
 	  } else if (guessesLeft < 1){
 	  	losing();
 	  };
 	});
 };
-
-// calling game function first
-gameFunction();
 
 // questions for inquirer after game is done
 var afterGameQuestions = [
@@ -73,34 +94,24 @@ var afterGameQuestions = [
 
 // winning function to reset guesses/pick a new word
 var winning = function(){
-	console.log("\nCongratulations! You Won!\n");
+	console.log("----------\nCongratulations! You Won!\n");
 	inquirer.prompt(afterGameQuestions).then(answers => {
 		if(answers.input_selection === "y"){
-			guessesLeft = 20;
-			chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
-			console.log("\n" + wordObj.displayArray);
-			console.log("\nGuesses left: " + guessesLeft + "\n");
-			gameFunction();
-
+			initializeGame();
 		} else {
-			console.log("Bye! :)");
+			console.log("\nBye! :)\n");
 		}
 	});
 };
 
 // losing function
 var losing = function(){
-	console.log("\nSorry, you lost!\n");
+	console.log("----------\n\nSorry, you lost!\n");
 	inquirer.prompt(afterGameQuestions).then(answers => {
 		if(answers.input_selection === "y"){
-			guessesLeft = 20;
-			chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
-			console.log("\n" + wordObj.displayArray);
-			console.log("\nGuesses left: " + guessesLeft + "\n");
-			gameFunction();
-
+			initializeGame();
 		} else {
-			console.log("Bye! :)");
+			console.log("\nBye! :)\n");
 		}
 	});
 };

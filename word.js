@@ -41,7 +41,6 @@ var Word = function(chosenWord){
 		for(var i = 0; i < this.letterArray[0].length; i++){
 			this.displayArray.push(this.letterObjArray[i].letterDisplayed);
 		};
-		// console.log(this.letterObjArray);
 
 	}
 };
