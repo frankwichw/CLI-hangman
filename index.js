@@ -33,38 +33,74 @@ var questions = [
   }
 ];
 
-var gameRunning = true;
-
 // using recursion to ask for guesses 
 var gameFunction = function() {
+	// inquirer prompting user for guess
+	inquirer.prompt(questions).then(answers => {
+	  // console.log(JSON.stringify(answers.input_guess));
+	  // decrement guesses left
+	  guessesLeft--;
 
-	// if the guesses left is over zero, continue to ask this question again
-	if (guessesLeft > 0) {
+	  // call guessing function to compare inquirer answer to letter objects
+	  wordObj.guessFunction(answers.input_guess);
 
-		// inquirer prompting user for guess
-		inquirer.prompt(questions).then(answers => {
-		  // console.log(JSON.stringify(answers.input_guess));
-		  // decrement guesses left
-		  guessesLeft--;
+	  // display the word and the guesses left to player
+	  console.log("\n" + wordObj.letterArray[0]);
+	  console.log("\n" + wordObj.displayArray);
+	  console.log("\nGuesses left: " + guessesLeft + "\n");
 
-		  // call guessing function to compare inquirer answer to letter objects
-		  wordObj.guessFunction(answers.input_guess);
-
-		  // display the word and the guesses left to player
-		  console.log("\n" + wordObj.displayArray);
-		  console.log("\nGuesses left: " + guessesLeft + "\n");
-
-		  if (wordObj.displayArray == wordObj.letterArray[0]){
-		  	gameRunning = false;
-		  	console.log("Congratulations! You won!");
-		  } else if (gameRunning === true) {
-			// call game function again to start the recursive loop
-			gameFunction();
-		  }
-		});
-	} else {
-		console.log("Sorry, you lost!\n");
-	};
+	  if (guessesLeft > 0 && wordObj.displayArray != wordObj.letterArray[0]){
+	  	gameFunction();
+	  } else if (guessesLeft > 0 && wordObj.displayArray === wordObj.letterArray[0]){
+	  	winning();
+	  } else if (guessesLeft < 1){
+	  	losing();
+	  };
+	});
 };
 
+// calling game function first
 gameFunction();
+
+// questions for inquirer after game is done
+var afterGameQuestions = [
+  {
+    type: 'input',
+    name: 'input_selection',
+    message: "Do you want to play again? y/n (type y or n and hit enter)"
+  }
+];
+
+// winning function to reset guesses/pick a new word
+var winning = function(){
+	console.log("\nCongratulations! You Won!\n");
+	inquirer.prompt(afterGameQuestions).then(answers => {
+		if(answers.input_selection === "y"){
+			guessesLeft = 20;
+			chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
+			console.log("\n" + wordObj.displayArray);
+			console.log("\nGuesses left: " + guessesLeft + "\n");
+			gameFunction();
+
+		} else {
+			console.log("Bye! :)");
+		}
+	});
+};
+
+// losing function
+var losing = function(){
+	console.log("\nSorry, you lost!\n");
+	inquirer.prompt(afterGameQuestions).then(answers => {
+		if(answers.input_selection === "y"){
+			guessesLeft = 20;
+			chosenWord = wordArray[Math.floor(Math.random() * (4 - 0) + 0)];
+			console.log("\n" + wordObj.displayArray);
+			console.log("\nGuesses left: " + guessesLeft + "\n");
+			gameFunction();
+
+		} else {
+			console.log("Bye! :)");
+		}
+	});
+};

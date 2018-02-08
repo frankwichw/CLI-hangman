@@ -11,8 +11,8 @@ var Word = function(chosenWord){
 	this.displayArray =[];
 	// function to split the passed word into individual letters and put it in an array
 	this.newLetters = function(chosenWord){
-		var splitWord = chosenWord.split("");
-		this.letterArray.push(splitWord);
+		// populating letter array with individual letters split from chosen word
+		this.letterArray.push(chosenWord.split(""));
 	};
 	// function to create letter objects from each individual letter
 	this.letterMaker = function(){
