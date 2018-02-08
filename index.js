@@ -54,16 +54,16 @@ var gameFunction = function() {
 		  console.log("\n" + wordObj.displayArray);
 		  console.log("\nGuesses left: " + guessesLeft + "\n");
 
-		  if (wordObj.displayArray === wordObj.letterArray){
+		  if (wordObj.displayArray == wordObj.letterArray[0]){
 		  	gameRunning = false;
-		  	return console.log("Congratulations! You won!");
-		  } else if (wordObj.displayArray === wordObj.letterArray && gameRunning === true) {
+		  	console.log("Congratulations! You won!");
+		  } else if (gameRunning === true) {
 			// call game function again to start the recursive loop
 			gameFunction();
 		  }
 		});
 	} else {
-		console.log("Sorry, you lost!");
+		console.log("Sorry, you lost!\n");
 	};
 };
 
